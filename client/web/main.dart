@@ -11,8 +11,8 @@ part 'items_backend.dart';
 
 void main() {
   var module = new Module()
-      ..type(Todo)
-      ..type(ItemsBackend);
+      ..bind(Todo)
+      ..bind(ItemsBackend);
 
   applicationFactory().addModule(module).run();
 }
