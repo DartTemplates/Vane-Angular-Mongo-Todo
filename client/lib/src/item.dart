@@ -1,15 +1,13 @@
-library item;
-
-import 'package:uuid/uuid.dart' show UuidBase;
+part of item;
 
 class Item {
   String id;
   String text = "";
   bool done = false;
   bool archived = false;
-  
+
   static UuidBase uuid = new UuidBase();
-  
+
   Item([this.text, this.done, this.archived, id]) {
     if(id == null) {
       this.id = uuid.v1();
@@ -34,14 +32,14 @@ class Item {
     done = false;
     archived = false;
   }
-  
+
   Item.fromJson(Map json) {
     id = json["id"];
     text = json["text"];
     done = json["done"];
     archived = json["archived"];
   }
-  
+
   Map toJson() {
     return {"id": id, "text": text, "done": done, "archived": archived};
   }

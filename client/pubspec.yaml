@@ -1,9 +1,9 @@
 name: client
 dependencies:
   angular: 0.10.0
-  browser: any
-  unittest: any
-  uuid: any 
+  browser: '>=0.10.0 <0.11.0'
+  unittest: '>=0.11.0 <0.12.0'
+  uuid: '>=0.3.2 <0.4.0'
 transformers:
-- angular
+  - angular
 

@@ -1,32 +1,23 @@
-import 'dart:async';
-import 'package:vane/vane.dart';
-import '../client/web/lib/item.dart';
+part of server;
 
 class Todo extends Vane {
-  /// Setup middleware handlers that should run 
-  init() {
-    // Log requests to console for debugging (run pre/before handler function)
-    pre.add(new Log());
-    
-    // Enable Cors for easier local development (run pre/before handler function)
-    // Note: You also need to change the urls in client/web/backend.dart if 
-    // you want to run the app with cors locally  
-//    pre.add(new Cors());
-  }
-  
-  /// Get all items in list 
+  /// Setup middleware handlers that should run ("This" is optional)
+  var pipeline = [Log, This];
+
+  /// Get all items in list
+  @Route("/todos", method: GET)
   Future getAll() {
     log.info("Returing all items");
-    
+
     mongodb.then((mongodb) {
       var itemsColl = mongodb.collection("items");
-      
+
       itemsColl.find().toList().then((List<Map> items) {
         log.info("Found ${items.length} item(s)");
-        
-        // Show database content for debugging/testing purposes 
+
+        // Show database content for debugging/testing purposes
         printItems();
-        
+
         close(items);
       }).catchError((e) {
         log.warning("Unable to find any items: ${e}");
@@ -39,24 +30,25 @@ class Todo extends Vane {
 
     return end;
   }
-  
-  /// Add a new item 
+
+  /// Add a new item
+  @Route("/todos", method: POST)
   Future add() {
     log.info("Adding new item");
 
-    // Parse item to make sure only objects of type "Item" is accepted 
+    // Parse item to make sure only objects of type "Item" is accepted
     var newItem = new Item.fromJson(json);
-    
-    // Add item to database 
+
+    // Add item to database
     mongodb.then((mongodb) {
       var itemsColl = mongodb.collection("items");
-      
+
       itemsColl.insert(newItem.toJson()).then((dbRes) {
         log.info("Mongodb: ${dbRes}");
-        
-        // Show database content for debugging/testing purposes 
+
+        // Show database content for debugging/testing purposes
         printItems();
-        
+
         close("ok");
       }).catchError((e) {
         log.warning("Unable to insert new item: ${e}");
@@ -66,27 +58,28 @@ class Todo extends Vane {
       log.warning("Unable to insert new item: ${e}");
       close("error");
     });
-    
+
     return end;
   }
 
-  /// Update existing item 
+  /// Update existing item
+  @Route("/todos", method: PUT)
   Future update() {
-    // Parse item to make sure only objects of type "Item" is accepted 
+    // Parse item to make sure only objects of type "Item" is accepted
     var updatedItem = new Item.fromJson(json);
-    
+
     log.info("Updating item ${updatedItem.id}");
-    
-    // Add item to database 
+
+    // Add item to database
     mongodb.then((mongodb) {
       var itemsColl = mongodb.collection("items");
-      
+
       itemsColl.update({"id": updatedItem.id}, updatedItem.toJson()).then((dbRes) {
         log.info("Mongodb: ${dbRes}");
-        
-        // Show database content for debugging/testing purposes 
+
+        // Show database content for debugging/testing purposes
         printItems();
-        
+
         close("ok");
       }).catchError((e) {
         log.warning("Unable to update item: ${e}");
@@ -96,24 +89,25 @@ class Todo extends Vane {
       log.warning("Unable to update item: ${e}");
       close("error");
     });
-    
+
     return end;
   }
-  
-  /// Delete item from list 
+
+  /// Delete item from list
+  @Route("/todos", method: DELETE)
   Future delete() {
     log.info("Deleting item ${path[1]}");
-    
-    // Add item to database 
+
+    // Add item to database
     mongodb.then((mongodb) {
       var itemsColl = mongodb.collection("items");
-      
+
       itemsColl.remove({"id": path[1]}).then((dbRes) {
         log.info("Mongodb: ${dbRes}");
-        
-        // Show database content for debugging/testing purposes 
+
+        // Show database content for debugging/testing purposes
         printItems();
-        
+
         close("ok");
       }).catchError((e) {
         log.warning("Unable to update item: ${e}");
@@ -123,14 +117,14 @@ class Todo extends Vane {
       log.warning("Unable to update item: ${e}");
       close("error");
     });
-    
+
     return end;
   }
-  
-  /// Helper function printing all content of the database collection   
+
+  /// Helper function printing all content of the database collection
   void printItems() {
-    
-    // Fetch all items from database and print to console 
+
+    // Fetch all items from database and print to console
     mongodb.then((mongodb) {
       var itemsColl = mongodb.collection("items");
 
