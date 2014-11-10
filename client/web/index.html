@@ -4,25 +4,25 @@
   <head>
     <meta charset="utf-8">
     <title>Vane Todo</title>
-    
+
     <!-- Pure CSS plus pure css extras -->
     <link rel="stylesheet" type="text/css" href="css/pure-min.css">
     <link rel="stylesheet" type="text/css" href="css/pure-extras.css">
-    
+
     <!-- Own stylesheets -->
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" type="text/css" href="css/todo.css">
   </head>
 <body ng-app>
 
   <div ng-hide="true" class="border well loading">Wait, Dart is loading this awesome app...</div>
 
-  <div todo-controller class="pure-g-r content content-offset" ng-cloak>
+    <div todo-controller ng-cloak class="pure-g-r content content-offset">
+
     <div class="pure-u-1-1 well">
       <h1>Todo list</h1>
       <p>Remaining <b>{{todo.remaining()}}</b> of <b>{{todo.items.length}}</b> items.</p>
     </div>
-    
+
     <!-- Input buttons -->
     <div id="input-box" class="pure-u-1-1 well">
       <form class="pure-form pure-g">
@@ -37,7 +37,7 @@
         </div>
       </form>
     </div>
-    
+
     <!-- List of todo items -->
     <div class="pure-u-1-1 well" ng-repeat="item in todo.items" ng-class="todo.classFor(item)">
       <form class="pure-form pure-g">

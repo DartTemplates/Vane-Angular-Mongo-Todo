@@ -2,7 +2,7 @@ part of server;
 
 class Todo extends Vane {
   /// Setup middleware handlers that should run ("This" is optional)
-  var pipeline = [Log, This];
+  var pipeline = [Log, Cors, This];
 
   /// Get all items in list
   @Route("/todos", method: GET)
