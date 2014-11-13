@@ -2,7 +2,7 @@ library server;
 
 import 'dart:async';
 import 'package:vane/vane.dart';
-import 'package:client/item.dart';
+import 'package:Vane_Angular_Todo/item.dart';
 
 part 'todo.dart';
 

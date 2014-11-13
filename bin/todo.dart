@@ -2,7 +2,7 @@ part of server;
 
 class Todo extends Vane {
   /// Setup middleware handlers that should run ("This" is optional)
-  var pipeline = [Log, Cors, This];
+  var pipeline = [Cors, Log, This];
 
   /// Get all items in list
   @Route("/todos", method: GET)
@@ -32,12 +32,17 @@ class Todo extends Vane {
   }
 
   /// Add a new item
-  @Route("/todos", method: POST)
+  @Route("/todos", methods: const [POST, OPTIONS])
   Future add() {
     log.info("Adding new item");
 
     // Parse item to make sure only objects of type "Item" is accepted
     var newItem = new Item.fromJson(json);
+
+    print("");
+    print('json    = $json');
+    print('newItem = $newItem');
+    print("");
 
     // Add item to database
     mongodb.then((mongodb) {

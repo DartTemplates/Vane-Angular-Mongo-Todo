@@ -3,11 +3,13 @@ part of todo;
 // Backend class that communicates with the backend and hold the items list
 @Injectable()
 class ItemsBackend {
-  final Http _http;
+//  Http _http2;
+  BrowserClient _http = new BrowserClient();
   List<Item> data = [];
   String _baseUrl;
 
-  ItemsBackend(this._http) {
+//  ItemsBackend(this._http) {
+  ItemsBackend() {
     // Initialize baseUrl (9090 for during development locally, otherwise use
     // standard port 80 for production)
     Uri uri = Uri.parse(window.location.href);
@@ -17,8 +19,10 @@ class ItemsBackend {
 
   void getAll() {
     // Make request to get a list of all todo items
-    _http.get('${_baseUrl}/todos').then((HttpResponse res) {
-      res.data.forEach((item) {
+    _http.get('${_baseUrl}/todos').then((res) {
+      var json = JSON.decode(res.body);
+
+      json.forEach((item) {
         data.add(new Item.fromJson(item));
       });
     });
@@ -30,11 +34,14 @@ class ItemsBackend {
     // Add new item to list, instant change in UI
     data.add(item);
 
+    print("Body: ${JSON.encode(item)}");
+
     // Make request to add new item to database
     _http.post("${_baseUrl}/todos",
-                JSON.encode(item)).then((HttpResponse res) {
+               body: JSON.encode(item),
+               headers: {'Content-Type': 'application/json'}).then((res) {
       // If there were an error, remove it from the list
-      if(res.status != 200) {
+      if(res.statusCode != 200) {
         data.removeWhere((i) => i.id == item.id);
       }
     }).catchError((error) {
@@ -49,10 +56,9 @@ class ItemsBackend {
     print("In backend.update");
 
     // Make request to update archive property in database
-    _http.put("${_baseUrl}/todos",
-              JSON.encode(data[index])).then((HttpResponse res) {
+    _http.put("${_baseUrl}/todos", body: JSON.encode(data[index])).then((res) {
       // If action was not successfull, reset item's state
-      if(res.status == 200) {
+      if(res.statusCode == 200) {
         print("Item has been updated");
       } else {
         print("There was an error updating the item");
@@ -72,9 +78,9 @@ class ItemsBackend {
     data.removeAt(index);
 
     // Make request to delete item
-    _http.delete("${_baseUrl}/todos/${item.id}").then((HttpResponse res) {
+    _http.delete("${_baseUrl}/todos/${item.id}").then((res) {
       // If action was not successfull, put back item into list again
-      if(res.status != 200) {
+      if(res.statusCode != 200) {
         data.insert(index, item);
       }
     }).catchError((error) {
